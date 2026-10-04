@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Upload an image and description to YK PRODUCTIONS.">
+  <title>Upload an Image | YK PRODUCTIONS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <a class="logo" href="index.html#home" aria-label="YK PRODUCTIONS home"><img class="brand-logo" src="logo.png" alt="YK PRODUCTIONS logo"></a>
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+    <nav class="nav">
+      <a href="index.html#home">Home</a><a href="index.html#about">About</a><a href="index.html#services">Services</a>
+      <a href="index.html#appointments">Appointments</a><a href="upload.html" aria-current="page">Upload</a>
+      <a href="index.html#why-us">Why Us</a><a href="index.html#contact">Contact</a>
+      <a href="https://www.instagram.com/_yadhukrishna_pm?utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+  </header>
+  <main class="upload-main">
+    <section class="upload-panel">
+      <p class="eyebrow">SHARE WITH YK PRODUCTIONS</p>
+      <h1>Upload Your <span>Image.</span></h1>
+      <p class="upload-intro">Choose an image, tell us what it is about, and send it to YK PRODUCTIONS. No visitor email address is requested.</p>
+      <form class="appointment-form upload-form" action="https://formspree.io/f/xzezajzz" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_subject" value="New Image Upload — YK PRODUCTIONS">
+        <input type="hidden" name="submission_type" value="Website image upload">
+        <label>Your Name <span class="optional-tag">(optional)</span><input type="text" name="name" autocomplete="name" placeholder="Enter your name"></label>
+        <label>Choose Image <span class="required-tag">Required</span><input type="file" name="image_upload" accept="image/png,image/jpeg,image/webp,image/gif" required><small class="field-help">Accepted formats: PNG, JPG/JPEG, WEBP, or GIF. Keep the image within your form service's upload limits.</small></label>
+        <label>Image Description <span class="required-tag">Required</span><textarea name="description" rows="5" maxlength="3000" placeholder="Describe the image and tell us what you want us to know..." required></textarea></label>
+        <label class="consent-line"><input type="checkbox" name="permission_confirmation" value="I confirm I have permission to share this image" required><span>I confirm I have the right to share this image with YK PRODUCTIONS.</span></label>
+        <button class="btn primary appointment-submit" type="submit">Send Image</button>
+        <p class="form-note">Your image and description will be submitted through Formspree. Uploaded files are normally provided as download links in the submission notification, not as direct email attachments.</p>
+      </form>
+      <a class="upload-back-link" href="index.html">← Back to YK PRODUCTIONS</a>
+    </section>
+  </main>
+  <footer><div class="footer-brand"><img class="footer-logo" src="logo.png" alt="YK PRODUCTIONS logo"> YK PRODUCTIONS</div><p>© <span id="year"></span> YK PRODUCTIONS. All rights reserved.</p></footer>
+  <script src="script.js"></script>
+</body>
+</html>
