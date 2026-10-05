@@ -1,242 +1,331 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="YK PRODUCTIONS - Professional technology solutions from Kerala.">
-  <title>YK PRODUCTIONS | Technology Solutions</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ALAN EGG CATCHER | YK PRODUCTIONS</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif}
+body{background:#1597e5}
+#game{position:relative;width:100%;height:100%;overflow:hidden;background:linear-gradient(#35b9ff 0%,#168fe0 58%,#78d7ff 100%);touch-action:none}
+canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.back{position:absolute;top:14px;left:14px;z-index:5;color:#075d8d;text-decoration:none;background:#ffffffdd;border:1px solid #ffffff88;border-radius:10px;padding:8px 11px;font-size:12px;font-weight:800}.title{font-weight:900;letter-spacing:2px;color:white;text-shadow:0 2px 3px #0871ad;font-size:17px}
+.score{font:900 24px monospace;color:white;text-shadow:0 2px 3px #0871ad}
+.badge{background:#ffffffdd;color:#075d8d;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800}
+.help{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:#ffffffdd;color:#075d8d;padding:8px 13px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;pointer-events:none}
+.touch{position:absolute;bottom:60px;left:0;right:0;display:flex;justify-content:space-between;padding:0 22px;pointer-events:none}
+.touch button{pointer-events:auto;width:64px;height:64px;border:0;border-radius:50%;background:#ffffffcc;color:#075d8d;font-size:30px;font-weight:900;box-shadow:0 4px 0 #0871ad}
+.over{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#087fc8aa}
+.over.show{display:flex}
+.box{background:white;border:3px solid #075d8d;border-radius:22px;padding:28px 32px;text-align:center;box-shadow:0 9px 0 #075d8d}
+.box h1{margin:0 0 8px;color:#075d8d}
+.box p{color:#38627a}
+.box button{border:0;border-radius:12px;background:#075d8d;color:white;padding:12px 22px;font-weight:900;font-size:15px}
+</style>
 </head>
 <body>
-  <header class="header">
-    <a class="logo" href="#home" aria-label="YK PRODUCTIONS home">
-      <img class="brand-logo" src="logo.png" alt="YK PRODUCTIONS logo">
-    </a>
-    <button class="menu-toggle" aria-label="Open menu">☰</button>
-    <nav class="nav">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#appointments">Appointments</a>
-      <a href="upload.html">Upload</a>
-      <a href="#why-us">Why Us</a>
-      <a href="#contact">Contact</a>
-      <a href="https://www.instagram.com/_yadhukrishna_pm?utm_source=qr" target="_blank" rel="noopener">Instagram</a>
-    </nav>
-  </header>
+<audio id="backgroundMusic" src="videoplayback.weba" loop preload="auto"></audio>
+<div id="game">
+<a class="back" href="../">← YK PRODUCTIONS</a>
+<canvas id="c"></canvas>
+<div class="hud">
+  <div class="title">EGG CATCHER</div>
+  <div class="badge">CATCH THE EGGS!</div>
+  <div class="score" id="score">000</div>
+</div>
+<div class="help">← → / SWIPE / TOUCH BUTTONS TO MOVE</div>
+<div class="touch">
+  <button id="left">‹</button>
+  <button id="right">›</button>
+</div>
+<div class="over" id="over">
+  <div class="box">
+    <h1>GAME OVER</h1>
+    <p>Final Score: <b id="final">0</b></p>
+    <button id="restart">PLAY AGAIN</button>
+  </div>
+</div>
+</div>
 
-  <main>
-    <section id="home" class="hero">
-      <div class="hero-content">
-        <p class="eyebrow">YK PRODUCTIONS • KERALA</p>
-        <h1>THE BEST IS <span>THERE IN FRONT OF YOU.</span></h1>
-        <h2 class="owner-name">YADHUKRISHNA PM</h2>
-        <p class="hero-text">
-          Technology-focused solutions with a professional, creative and modern approach.
-          Explore YK PRODUCTIONS and connect directly with Yadhukrishna.
-        </p>
-        <div class="hero-details">
-          <span>📍 Kerala</span>
-          <span>📞 +91 96455 41537</span>
-          <span>✉️ aarushpm3@gmail.com</span>
-        </div>
-        <div class="hero-buttons">
-          <a class="btn primary" href="#services">Explore Services</a>
-          <a class="btn secondary" href="https://www.instagram.com/_yadhukrishna_pm?utm_source=qr" target="_blank" rel="noopener">Instagram</a>
-          <a class="btn secondary" href="https://wa.me/919645541537" target="_blank" rel="noopener">WhatsApp</a>
-          <a class="btn secondary" href="#appointments">Book Appointment</a>
-        </div>
-      </div>
-      <div class="hero-card profile-banner">
-        <img src="profile.jpg" alt="Yadhukrishna PM">
-        <div class="profile-overlay">
-          <span>FOUNDER / YK PRODUCTIONS</span>
-          <strong>YADHUKRISHNA PM</strong>
-        </div>
-      </div>
-    </section>
+<script>
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const scoreEl=document.getElementById('score');
+const over=document.getElementById('over');
+const finalEl=document.getElementById('final');
+const restart=document.getElementById('restart');
+const leftBtn=document.getElementById('left');
+const rightBtn=document.getElementById('right');
+const playerImg=new Image();
+playerImg.src='player.png';
 
-    <section id="about" class="section">
-      <div class="section-heading">
-        <p class="eyebrow">WHO WE ARE</p>
-        <h2>Technology with a <span>professional edge.</span></h2>
-      </div>
-      <div class="about-grid">
-        <div>
-          <p>
-            YK PRODUCTIONS is a Kerala-based tech brand focused on practical,
-            modern and creative technology-related services.
-          </p>
-          <p>
-            Our goal is simple: turn ideas into polished digital experiences
-            and help clients move confidently into the future.
-          </p>
-        </div>
-        <div class="stats">
-          <div><strong>01</strong><span>Professional approach</span></div>
-          <div><strong>02</strong><span>Modern technology</span></div>
-          <div><strong>03</strong><span>Client-focused service</span></div>
-        </div>
-      </div>
-    </section>
+let W=0,H=0,D=1,ground=0;
+let player,eggs,particles,pops,clouds;
+let score=0,alive=true,last=0,spawnTimer=0,moveDir=0;
+let touchStartX=null,touchStartPlayerX=null;
+let milestone=0;
 
-    <section id="services" class="section dark-section">
-      <div class="section-heading center">
-        <p class="eyebrow">WHAT WE DO</p>
-        <h2>Our <span>Services</span></h2>
-        <p>Technology-related services designed around your needs.</p>
-      </div>
-      <div class="service-grid">
-        <article class="service-card">
-          <div class="icon">01</div>
-          <h3>Digital Solutions</h3>
-          <p>Professional digital solutions built to support your goals and workflow.</p>
-        </article>
-        <article class="service-card">
-          <div class="icon">02</div>
-          <h3>Web & Tech</h3>
-          <p>Modern web and technology services with a clean, responsive experience.</p>
-        </article>
-        <article class="service-card">
-          <div class="icon">03</div>
-          <h3>Tech Support</h3>
-          <p>Practical technology assistance for smoother digital operations.</p>
-        </article>
-        <a class="service-card game-service-card" href="ajzal-bird/" aria-label="Open AJZAL BIRD game">
-          <div class="icon">04</div>
-          <h3>AJZAL BIRD</h3>
-          <p>Play our custom Flappy Bird-style game featuring the red bird with the uploaded custom head.</p>
-          <span class="btn secondary">PLAY AJZAL BIRD</span>
-        </a>
-        <a class="service-card game-service-card" href="joval-dino/" aria-label="Open JOVAL DINO game">
-          <div class="icon">05</div>
-          <h3>JOVAL DINO</h3>
-          <p>Play our offline-style endless runner featuring the full custom head jumping over obstacles.</p>
-          <span class="btn secondary">PLAY JOVAL DINO</span>
-        </a>
-        <a class="service-card game-service-card" href="alan-egg-catcher/" aria-label="Open ALAN EGG CATCHER game">
-          <div class="icon">06</div>
-          <h3>ALAN EGG CATCHER</h3>
-          <p>Catch falling eggs with the custom character, blue sky, touch controls, score and POP celebrations every 10 points.</p>
-          <span class="btn secondary">PLAY ALAN EGG CATCHER</span>
-        </a>
-        <a class="service-card game-service-card" href="vasu-dobu/" aria-label="Open VASU DOBU game">
-          <div class="icon">07</div>
-          <h3>VASU DOBU</h3>
-          <p>Catch falling Doberman heads for 5 points and bone-shaped dog biscuits for 1 point in this dog-themed catching game.</p>
-          <span class="btn secondary">PLAY VASU DOBU</span>
-        </a>
-      </div>
-    </section>
+function resize(){
+  D=Math.min(devicePixelRatio||1,2);
+  W=innerWidth; H=innerHeight;
+  canvas.width=W*D; canvas.height=H*D;
+  ctx.setTransform(D,0,0,D,0,0);
+  ground=H*.80;
+  if(player){
+    player.y=ground-player.h;
+    player.x=Math.max(12,Math.min(W-player.w-12,player.x));
+  }
+}
+addEventListener('resize',resize);
 
+function startBackgroundMusic(){
+  const music=document.getElementById('backgroundMusic');
+  if(music && music.paused) music.play().catch(()=>{});
+}
 
-    <section id="appointments" class="section appointment-section">
-      <div class="appointment-grid">
-        <div class="appointment-copy">
-          <p class="eyebrow">BOOK AN APPOINTMENT</p>
-          <h2>Let's discuss your <span>next idea.</span></h2>
-          <p>
-            Choose a preferred date and time, tell us what you need, and send
-            the request directly to YK PRODUCTIONS by email.
-          </p>
-          <div class="appointment-points">
-            <div><strong>01</strong><span>Choose your service</span></div>
-            <div><strong>02</strong><span>Select your preferred date & time</span></div>
-            <div><strong>03</strong><span>Send your request by email</span></div>
-          </div>
-        </div>
+function reset(){
+  startBackgroundMusic();
+  resize();
+  const pw=Math.min(118,Math.max(82,W*.25));
+  const ph=pw*(511/314);
+  player={x:W/2-pw/2,y:ground-ph,w:pw,h:ph,speed:W<600?430:520};
+  eggs=[];
+  particles=[];
+  pops=[];
+  clouds=[];
+  score=0; milestone=0; alive=true; moveDir=0;
+  spawnTimer=.55;
+  over.classList.remove('show');
+  scoreEl.textContent='000';
+  last=performance.now();
+  requestAnimationFrame(loop);
+}
 
-        <form id="appointmentForm" class="appointment-form"
-          action="https://formspree.io/f/xzezajzz" method="POST">
-          <label>
-            Your Name
-            <input type="text" id="appointmentName" name="name" placeholder="Enter your name" required>
-          </label>
+function move(dx){
+  if(!alive)return;
+  player.x+=dx;
+  player.x=Math.max(8,Math.min(W-player.w-8,player.x));
+}
 
-          <label>
-            Phone Number
-            <input type="tel" id="appointmentPhone" name="phone" placeholder="Enter your phone number" required>
-          </label>
+function spawnEgg(){
+  const r=15+Math.random()*5;
+  eggs.push({
+    x:r+Math.random()*(W-r*2),
+    y:-r-12,
+    r:r,
+    vy:210+Math.random()*90+Math.min(score*2,180),
+    rot:(Math.random()-.5)*.3
+  });
+}
 
-          <label>
-            Email Address
-            <input type="email" id="appointmentEmail" name="_replyto" placeholder="Enter your email address" required>
-          </label>
+function catchEgg(e){
+  const px=player.x+player.w*.18;
+  const pw=player.w*.64;
+  const py=player.y+player.h*.12;
+  const ph=player.h*.72;
+  return e.x>px-e.r && e.x<px+pw+e.r &&
+         e.y+e.r>py && e.y-e.r<py+ph;
+}
 
-          <label>
-            Service Required
-            <select id="appointmentService" name="service" required>
-              <option value="" selected disabled>Select a service</option>
-              <option>Digital Solutions</option>
-              <option>Web & Tech</option>
-              <option>Tech Support</option>
-              <option>Other Tech Service</option>
-            </select>
-          </label>
+function addBurst(x,y){
+  for(let i=0;i<38;i++){
+    const a=Math.random()*Math.PI*2;
+    const s=90+Math.random()*260;
+    particles.push({
+      x,y,
+      vx:Math.cos(a)*s,
+      vy:Math.sin(a)*s-80,
+      life:.7+Math.random()*.7,
+      max:.7+Math.random()*.7,
+      size:4+Math.random()*7,
+      rot:Math.random()*Math.PI
+    });
+  }
+  pops.push({x,y,text:'POP!',life:1});
+}
 
-          <div class="form-row">
-            <label>
-              Preferred Date
-              <input type="date" id="appointmentDate" name="preferred_date" required>
-            </label>
-            <label>
-              Preferred Time
-              <input type="time" id="appointmentTime" name="preferred_time" required>
-            </label>
-          </div>
+function celebrate(){
+  addBurst(W/2,H*.38);
+  if(navigator.vibrate) navigator.vibrate([40,40,80]);
+}
 
-          <label>
-            Requirements / Message
-            <textarea id="appointmentMessage" name="message" rows="4" placeholder="Tell us briefly what you need"></textarea>
-          </label>
+function drawBackground(){
+  ctx.clearRect(0,0,W,H);
 
-          <input type="hidden" name="_subject" value="New Appointment Request — YK PRODUCTIONS">
-          <input type="hidden" name="_next" value="./">
-          <button class="btn primary appointment-submit" type="submit">
-            Send Appointment Request
-          </button>
-          <p class="form-note">
-            Your appointment request will be sent by email. The appointment is confirmed only after YK PRODUCTIONS replies.
-          </p>
-        </form>
-      </div>
-    </section>
+  ctx.fillStyle='#ffffff55';
+  for(const c of clouds){
+    ctx.beginPath();
+    ctx.arc(c.x,c.y,c.s*.55,0,Math.PI*2);
+    ctx.arc(c.x+c.s*.45,c.y-5,c.s*.7,0,Math.PI*2);
+    ctx.arc(c.x+c.s,c.y,c.s*.5,0,Math.PI*2);
+    ctx.fill();
+  }
 
-    <section id="why-us" class="section">
-      <div class="section-heading">
-        <p class="eyebrow">WHY YK PRODUCTIONS</p>
-        <h2>Simple. Modern. <span>Professional.</span></h2>
-      </div>
-      <div class="features">
-        <div class="feature"><b>01</b><h3>Professional Quality</h3><p>Every project gets a polished and reliable approach.</p></div>
-        <div class="feature"><b>02</b><h3>Modern Thinking</h3><p>We keep the focus on useful, current technology.</p></div>
-        <div class="feature"><b>03</b><h3>Personal Attention</h3><p>Clear communication and solutions shaped around the client.</p></div>
-      </div>
-    </section>
+  ctx.fillStyle='#49c96b';
+  ctx.fillRect(0,ground+5,W,H-ground);
+  ctx.fillStyle='#35ad57';
+  for(let x=0;x<W;x+=28) ctx.fillRect(x,ground+5,14,4);
+}
 
-    <section id="contact" class="contact-section">
-      <div class="contact-inner">
-        <div>
-          <p class="eyebrow">LET'S CONNECT</p>
-          <h2>Have an idea?<br><span>Let's build it.</span></h2>
-          <p>Reach YK PRODUCTIONS for technology-related services in Kerala.</p>
-        </div>
-        <div class="contact-details">
-          <a href="tel:+919645541537"><small>PHONE</small><strong>+91 96455 41537</strong></a>
-          <a href="https://wa.me/919645541537" target="_blank" rel="noopener"><small>WHATSAPP</small><strong>Chat with us</strong></a>
-          <a href="mailto:aarushpm3@gmail.com"><small>EMAIL</small><strong>aarushpm3@gmail.com</strong></a>
-          <a href="https://www.instagram.com/_yadhukrishna_pm?utm_source=qr" target="_blank" rel="noopener"><small>INSTAGRAM</small><strong>@_yadhukrishna_pm</strong></a>
-          <div><small>LOCATION</small><strong>Kerala, India</strong></div>
-        </div>
-      </div>
-    </section>
-  </main>
+function drawEgg(e){
+  ctx.save();
+  ctx.translate(e.x,e.y);
+  ctx.rotate(e.rot);
+  ctx.fillStyle='#fffdf5';
+  ctx.strokeStyle='#d7d7d0';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.ellipse(0,0,e.r*.78,e.r,0,0,Math.PI*2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#ffe8a8';
+  ctx.beginPath();
+  ctx.arc(-4,-3,3,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
 
-  <footer>
-    <div class="footer-brand"><img class="footer-logo" src="logo.png" alt="YK PRODUCTIONS logo"> YK PRODUCTIONS</div>
-    <p>© <span id="year"></span> YK PRODUCTIONS. All rights reserved.</p>
-  </footer>
+function drawPlayer(){
+  if(playerImg.complete && playerImg.naturalWidth){
+    ctx.drawImage(playerImg,player.x,player.y,player.w,player.h);
+  }else{
+    ctx.fillStyle='#222';
+    ctx.fillRect(player.x,player.y,player.w,player.h);
+  }
+}
 
-  <script src="script.js"></script>
+function drawEffects(){
+  for(const p of particles){
+    ctx.save();
+    ctx.globalAlpha=Math.max(0,p.life/p.max);
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle=['#ffdf3f','#ff4f70','#ffffff','#7dff86','#9b7bff'][Math.floor(p.x+p.y)%5];
+    ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);
+    ctx.restore();
+  }
+  for(const p of pops){
+    ctx.save();
+    ctx.globalAlpha=p.life;
+    ctx.fillStyle='#fff';
+    ctx.strokeStyle='#075d8d';
+    ctx.lineWidth=4;
+    ctx.font='900 42px Arial';
+    ctx.textAlign='center';
+    ctx.strokeText(p.text,p.x,p.y);
+    ctx.fillText(p.text,p.x,p.y);
+    ctx.restore();
+  }
+}
+
+function loop(now){
+  if(!alive)return;
+  const dt=Math.min((now-last)/1000,.032);
+  last=now;
+
+  if(moveDir) move(moveDir*player.speed*dt);
+
+  spawnTimer-=dt;
+  if(spawnTimer<=0){
+    spawnEgg();
+    spawnTimer=Math.max(.32,1.0-Math.min(score*.015,.5))+Math.random()*.55;
+  }
+
+  for(const e of eggs) e.y+=e.vy*dt;
+
+  for(let i=eggs.length-1;i>=0;i--){
+    const e=eggs[i];
+    if(catchEgg(e)){
+      eggs.splice(i,1);
+      score++;
+      scoreEl.textContent=String(score).padStart(3,'0');
+      if(score%10===0 && score!==milestone){
+        milestone=score;
+        celebrate();
+      }
+    }else if(e.y-e.r>H){
+      eggs.splice(i,1);
+    }
+  }
+
+  for(const p of particles){
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=420*dt; p.life-=dt;
+  }
+  particles=particles.filter(p=>p.life>0);
+
+  for(const p of pops) p.life-=dt;
+  pops=pops.filter(p=>p.life>0);
+
+  if(clouds.length<7 && Math.random()<.02){
+    clouds.push({x:W+60,y:55+Math.random()*H*.3,s:20+Math.random()*35});
+  }
+  for(const c of clouds)c.x-=25*dt;
+  clouds=clouds.filter(c=>c.x>-100);
+
+  drawBackground();
+  eggs.forEach(drawEgg);
+  drawPlayer();
+  drawEffects();
+
+  requestAnimationFrame(loop);
+}
+
+function endGame(){
+  alive=false;
+  finalEl.textContent=score;
+  over.classList.add('show');
+}
+
+function hold(dir){
+  moveDir=dir;
+}
+function release(){
+  moveDir=0;
+}
+
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft' || e.key.toLowerCase()==='a'){e.preventDefault();moveDir=-1}
+  if(e.key==='ArrowRight' || e.key.toLowerCase()==='d'){e.preventDefault();moveDir=1}
+});
+addEventListener('keyup',e=>{
+  if(['ArrowLeft','ArrowRight','a','d'].includes(e.key) || ['A','D'].includes(e.key)) release();
+});
+
+leftBtn.addEventListener('pointerdown',()=>hold(-1));
+rightBtn.addEventListener('pointerdown',()=>hold(1));
+addEventListener('pointerup',release);
+addEventListener('pointercancel',release);
+
+addEventListener('touchstart',e=>{
+  if(!e.touches.length)return;
+  touchStartX=e.touches[0].clientX;
+  touchStartPlayerX=player ? player.x : null;
+},{passive:true});
+
+addEventListener('touchmove',e=>{
+  if(touchStartX===null || !player)return;
+  const dx=e.touches[0].clientX-touchStartX;
+  player.x=touchStartPlayerX+dx*1.15;
+  player.x=Math.max(8,Math.min(W-player.w-8,player.x));
+  e.preventDefault();
+},{passive:false});
+
+addEventListener('touchend',()=>{
+  touchStartX=null;
+  touchStartPlayerX=null;
+});
+
+restart.addEventListener('click',e=>{
+  e.stopPropagation();
+  reset();
+});
+
+resize();
+reset();
+// Retry playback on the first user interaction if the browser blocked autoplay.
+['pointerdown','keydown','touchstart'].forEach(type=>document.addEventListener(type,startBackgroundMusic,{once:true,passive:true}));
+window.addEventListener('pagehide',()=>{const music=document.getElementById('backgroundMusic');if(music){music.pause();music.currentTime=0;}});
+</script>
 </body>
 </html>
