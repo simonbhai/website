@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#79d9ff">
+<title>UDUMP PRANAV | YK PRODUCTIONS</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; min-height: 100%; overflow: hidden; }
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    color: #17324a;
+    background: linear-gradient(#55c7f5 0%, #b9edff 68%, #8edb79 68%, #4cae55 100%);
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  #game { position: relative; width: 100vw; height: 100dvh; min-height: 520px; overflow: hidden; }
+  .sky-glow { position:absolute; inset:0 0 29% 0; background:
+    radial-gradient(ellipse at 18% 18%,rgba(255,255,255,.65),transparent 30%),
+    radial-gradient(ellipse at 82% 10%,rgba(255,255,255,.4),transparent 26%),
+    linear-gradient(180deg,#52c5f5 0%,#b9edff 100%); }
+  .sun { position:absolute; width:76px;height:76px;border-radius:50%;right:9%;top:12%;
+    background:#fff5ad;box-shadow:0 0 45px 15px #fff3a866; }
+  .cloud { position:absolute; width:150px;height:42px;border-radius:50px;background:#fff;
+    opacity:.82; filter:drop-shadow(0 7px 5px #398eb044); animation: drift 28s linear infinite; }
+  .cloud:before,.cloud:after {content:"";position:absolute;background:inherit;border-radius:50%;}
+  .cloud:before {width:62px;height:62px;left:22px;top:-27px}
+  .cloud:after {width:78px;height:78px;right:20px;top:-39px}
+  .c1{top:18%;left:-180px;transform:scale(.85);animation-duration:34s}
+  .c2{top:34%;left:-220px;transform:scale(1.1);animation-duration:43s;animation-delay:-15s}
+  .c3{top:10%;left:-190px;transform:scale(.62);animation-duration:48s;animation-delay:-28s}
+  @keyframes drift { from{translate:0 0} to{translate:calc(100vw + 260px) 0} }
+  .hills { position:absolute;bottom:20%;left:-5%;width:110%;height:18%;border-radius:50% 50% 0 0/35% 35% 0 0;
+    background:linear-gradient(180deg,#8bdc78,#58bd60); }
+  .land {position:absolute;bottom:0;left:0;width:100%;height:24%;background:linear-gradient(#71ca60,#39984b);}
+  .land:before {content:"";position:absolute;top:-17px;left:-3%;width:106%;height:36px;border-radius:50%;background:#78d16a}
+  .grass {position:absolute;bottom:20%;width:100%;height:38px;opacity:.6;
+    background:radial-gradient(ellipse at 10% 100%,#278f46 0 3px,transparent 4px),
+    radial-gradient(ellipse at 22% 100%,#278f46 0 3px,transparent 4px),
+    radial-gradient(ellipse at 47% 100%,#278f46 0 3px,transparent 4px),
+    radial-gradient(ellipse at 70% 100%,#278f46 0 3px,transparent 4px),
+    radial-gradient(ellipse at 90% 100%,#278f46 0 3px,transparent 4px); }
+  header {position:absolute;z-index:5;top:0;left:0;width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 18px;gap:12px}
+  .brand {font-weight:900;letter-spacing:1.5px;color:#fff;text-shadow:0 2px 5px #23617a;font-size:clamp(14px,2.6vw,20px)}
+  .score {background:#ffffffdf;border:2px solid #fff;border-radius:16px;padding:8px 15px;font-weight:900;box-shadow:0 5px 15px #216c8b33}
+  .score span {color:#ed7b27}
+  .hint {position:absolute;z-index:4;top:76px;left:50%;transform:translateX(-50%);width:max-content;max-width:90%;
+    text-align:center;background:#ffffffd9;border:1px solid #fff;border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;box-shadow:0 4px 12px #246b8730}
+  #bugs {position:absolute;inset:0;z-index:3}
+  .bug {position:absolute;border:0;background:transparent;padding:0;font-size:clamp(32px,6vw,48px);line-height:1;
+    cursor:pointer;filter:drop-shadow(0 4px 3px #25506a55);animation: wobble .65s ease-in-out infinite alternate;}
+  .bug:active {transform:scale(.9)}
+  @keyframes wobble {to{rotate:12deg;translate:4px 0}}
+  #pranav {position:absolute;z-index:4;bottom:3%;left:50%;transform:translateX(-50%);
+    width:min(48vw,310px);height:min(49vh,360px);object-fit:contain;object-position:center bottom;
+    filter:drop-shadow(0 12px 9px #245b4533);pointer-events:none}
+  #tongue {position:absolute;z-index:3;left:0;top:0;width:0;height:0;pointer-events:none;transform-origin:0 50%;
+    border-radius:999px;background:linear-gradient(90deg,#ff8fa7,#ed426d);box-shadow:0 0 0 3px #ffd0dc88,0 3px 8px #9a285066;}
+  #tongue:after {content:"";position:absolute;right:-9px;top:-5px;width:17px;height:12px;border-radius:50%;background:#ed426d}
+  .panel {position:absolute;z-index:10;inset:0;display:grid;place-items:center;background:#14506a55;backdrop-filter:blur(5px);padding:20px}
+  .card {width:min(440px,94vw);text-align:center;background:#fffffff2;border:3px solid #fff;border-radius:28px;padding:28px 24px;box-shadow:0 20px 60px #164d6870}
+  .card h1 {margin:0 0 8px;font-size:clamp(30px,8vw,48px);color:#1684a9;letter-spacing:1px}
+  .card p {line-height:1.5;margin:8px 0 20px}
+  .play {border:0;border-radius:999px;padding:14px 30px;background:linear-gradient(135deg,#ff9b43,#ff6c5e);color:white;font-weight:900;font-size:17px;box-shadow:0 6px 0 #d94c43;cursor:pointer}
+  .play:active {transform:translateY(3px);box-shadow:0 3px 0 #d94c43}
+  .small {font-size:12px;color:#5b7787}
+  .hidden {display:none}
+  @media (max-width:600px) {
+    #pranav {width:min(66vw,300px);height:min(43vh,320px);bottom:4%}
+    .hint {top:66px;font-size:12px}
+    header {padding:12px}
+  }
+</style>
+</head>
+<body>
+<div id="game">
+  <div class="sky-glow"></div><div class="sun"></div>
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+  <div class="hills"></div><div class="land"></div><div class="grass"></div>
+  <header><div class="brand">YK PRODUCTIONS</div><div class="score">SCORE: <span id="score">0</span></div></header>
+  <div class="hint">TAP AN INSECT — PRANAV WILL CATCH IT! 👅</div>
+  <div id="bugs"></div>
+  <div id="tongue"></div>
+  <img id="pranav" src="pranav.png" alt="Pranav character">
+  <div id="start" class="panel">
+    <div class="card">
+      <h1>UDUMP PRANAV</h1>
+      <p>Insects are falling from the sky! Tap them and watch Pranav's frog-style tongue catch them.</p>
+      <button class="play" id="startBtn">LET'S PLAY!</button>
+      <p class="small">Sound starts when you begin. Keep tapping to score!</p>
+    </div>
+  </div>
+  <div id="audioUnlock" class="hidden"></div>
+  <audio id="bgAudio" src="udump-audio.mp3" loop preload="auto"></audio>
+</div>
+<script>
+(() => {
+  const area = document.getElementById('game');
+  const bugsLayer = document.getElementById('bugs');
+  const scoreEl = document.getElementById('score');
+  const tongue = document.getElementById('tongue');
+  const character = document.getElementById('pranav');
+  const startPanel = document.getElementById('start');
+  const audio = document.getElementById('bgAudio');
+  const types = ['🦋','🐝','🐞','🪲','🪰','🦗','🪳'];
+  let score = 0, running = false, spawnTimer = null, animationFrame = null;
+  let activeTongue = null;
+  const bugs = [];
+
+  function mouthPoint() {
+    const r = character.getBoundingClientRect();
+    return { x: r.left + r.width * 0.51, y: r.top + r.height * 0.34 };
+  }
+  function spawnBug() {
+    if (!running) return;
+    const el = document.createElement('button');
+    el.className = 'bug';
+    el.type = 'button';
+    el.textContent = types[Math.floor(Math.random() * types.length)];
+    const size = Math.max(34, Math.min(50, innerWidth * 0.055));
+    const x = 12 + Math.random() * Math.max(20, innerWidth - size - 24);
+    const y = -60;
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+    bugsLayer.appendChild(el);
+    const bug = {el, x, y, size, speed: 1.05 + Math.random() * 1.45, sway: Math.random() * 1.8, phase: Math.random() * 6.28, caught:false};
+    bugs.push(bug);
+    el.addEventListener('pointerdown', e => { e.preventDefault(); catchBug(bug); });
+  }
+  function catchBug(bug) {
+    if (!running || bug.caught) return;
+    bug.caught = true;
+    const mouth = mouthPoint();
+    const rect = bug.el.getBoundingClientRect();
+    const target = {x: rect.left + rect.width/2, y: rect.top + rect.height/2};
+    const dx = target.x-mouth.x, dy = target.y-mouth.y;
+    const length = Math.hypot(dx,dy);
+    tongue.style.left = mouth.x + 'px'; tongue.style.top = mouth.y + 'px';
+    tongue.style.width = length + 'px'; tongue.style.height = '11px';
+    tongue.style.transform = `rotate(${Math.atan2(dy,dx)}rad) scaleX(0)`;
+    tongue.style.transition = 'transform 130ms ease-out';
+    requestAnimationFrame(() => tongue.style.transform = `rotate(${Math.atan2(dy,dx)}rad) scaleX(1)`);
+    setTimeout(() => {
+      tongue.style.transition = 'transform 110ms ease-in';
+      tongue.style.transform = `rotate(${Math.atan2(dy,dx)}rad) scaleX(0)`;
+      setTimeout(() => { tongue.style.width = '0'; tongue.style.transition = ''; }, 120);
+    }, 170);
+    setTimeout(() => bug.el.remove(), 170);
+    score++; scoreEl.textContent = score;
+  }
+  function tick() {
+    if (!running) return;
+    const h = innerHeight;
+    for (let i = bugs.length - 1; i >= 0; i--) {
+      const b = bugs[i];
+      if (b.caught) { bugs.splice(i,1); continue; }
+      b.y += b.speed;
+      b.x += Math.sin((b.y/35)+b.phase) * b.sway;
+      b.el.style.top = b.y + 'px';
+      b.el.style.left = b.x + 'px';
+      if (b.y > h + 65) { b.el.remove(); bugs.splice(i,1); }
+    }
+    animationFrame = requestAnimationFrame(tick);
+  }
+  function start() {
+    if (running) return;
+    running = true; startPanel.classList.add('hidden');
+    audio.volume = 0.72;
+    audio.play().catch(() => {});
+    spawnBug(); spawnTimer = setInterval(spawnBug, 1050);
+    tick();
+  }
+  document.getElementById('startBtn').addEventListener('click', start);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) audio.pause();
+    else if (running) audio.play().catch(() => {});
+  });
+  window.addEventListener('pagehide', () => { clearInterval(spawnTimer); cancelAnimationFrame(animationFrame); });
+})();
+</script>
+</body>
+</html>
